@@ -29,7 +29,7 @@ def validate_iso8601(requestdate):
         if match_iso8601(requestdate) is not None:
             return True
     except:
-        log.warning(f'validate_iso8601 is called with requestdate: {requestdate}')
+        log.error(f'validate_iso8601 is called with requestdate: {requestdate}')
         pass
     return False
 
