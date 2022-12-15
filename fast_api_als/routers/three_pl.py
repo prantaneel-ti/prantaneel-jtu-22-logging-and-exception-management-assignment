@@ -48,8 +48,8 @@ async def view_authkey(request: Request, token: str = Depends(get_token)):
     provider, role = get_user_role(token)
 
     if role != "ADMIN" and role != "3PL":
+        log.info(f'Unauthorized access since role is {role} and not ADMIN or 3PL')
         raise HTTPException(status_code=401, detail='User with role other than ADMIN or 3PL are not authorized.')
-        pass
     if role == "ADMIN":
         provider = body['3pl']
     apikey = db_helper_session.get_auth_key(username=provider)
