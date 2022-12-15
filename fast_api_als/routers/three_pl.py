@@ -1,8 +1,6 @@
 import json
 import logging
-from fastapi import Request, HTTPException
-
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fast_api_als.database.db_helper import db_helper_session
 from fast_api_als.services.authenticate import get_token
 from fast_api_als.utils.cognito_client import get_user_role
@@ -24,8 +22,9 @@ async def reset_authkey(request: Request, token: str = Depends(get_token)):
         log.error(f'Request body parse failed: {e}')
     provider, role = get_user_role(token)
     if role != "ADMIN" and (role != "3PL"):
+        log.info(f'Unauthorized access since role is {role} and not ADMIN or 3PL')
         raise HTTPException(status_code=401, detail='User with role other than ADMIN or 3PL are not authorized.')
-        pass
+        
     if role == "ADMIN":
         provider = body['3pl']
     apikey = db_helper_session.set_auth_key(username=provider)
