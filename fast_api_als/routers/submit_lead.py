@@ -66,7 +66,11 @@ async def submit(file: Request, apikey: APIKey = Depends(get_api_key)):
             }
         }
         item, path = create_quicksight_data(obj, 'unknown_hash', 'REJECTED', '1_INVALID_XML', {})
-        s3_helper_client.put_file(item, path)
+        try:
+            s3_helper_client.put_file(item, path)
+            log.info('Successfully put data to s3')
+        except Exception as e:
+            log.error(f'Failed to put_file due to {e}')
         log.error(f'Request failed due to error in parsing XML')
         return {
             "status": "REJECTED",
@@ -82,7 +86,11 @@ async def submit(file: Request, apikey: APIKey = Depends(get_api_key)):
     #if not valid return
     if not validation_check:
         item, path = create_quicksight_data(obj['adf']['prospect'], lead_hash, 'REJECTED', validation_code, {})
-        s3_helper_client.put_file(item, path)
+        try:
+            s3_helper_client.put_file(item, path)
+            log.info('Successfully put data to s3')
+        except Exception as e:
+            log.error(f'Failed to put_file due to {e}')
         log.error(f'Request failed due to validation error with code: {validation_code} and message: {validation_message}')
         return {
             "status": "REJECTED",
