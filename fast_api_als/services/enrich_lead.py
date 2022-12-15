@@ -1,5 +1,6 @@
 import calendar
 import time
+import json
 import logging
 from dateutil import parser
 from fast_api_als.database.db_helper import db_helper_session
@@ -14,13 +15,9 @@ what exceptions can be thrown here?
 
 
 def get_enriched_lead_json(adf_json: dict) -> dict:
-    if not isinstance(adf_json, dict) :
-        #not a dict
-        log.info('adf_json is not a dict')
-        raise TypeError
-    if adf_json is None or adf_json=={}:
-        #empty dict
-        log.info("adf_json is null or empty")
+    try:
+        json.loads(adf_json)
+    except ValueError:
         raise ValueError
     if 'adf' not in adf_json:
         #field not found
